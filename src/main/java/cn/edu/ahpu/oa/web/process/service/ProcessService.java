@@ -76,4 +76,19 @@ public class ProcessService {
 		return pagination;
 	}
 	
+	/**
+	 * 根据流程定义ID激活流程,激活的同时把该流程下已经启动的流程实例也全部激活
+	 */
+	public void activateProcessDefinition(String processDefinitionId) {
+		repositoryService.activateProcessDefinitionById(processDefinitionId, true, null);
+	}
+	
+	/**
+	 * 根据流程定义ID挂起流程,挂起的同时把该流程下已经启动的流程实例也全部挂起
+	 * @param processDefinitionId 流程定义ID
+	 */
+	public void suspendProcessDefinition(String processDefinitionId) {
+		repositoryService.suspendProcessDefinitionById(processDefinitionId, true, null);
+	}
+	
 }

@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import cn.edu.ahpu.common.dao.support.Pagination;
 import cn.edu.ahpu.oa.utils.file.FileCommonOperate;
 import cn.edu.ahpu.oa.web.process.service.ProcessService;
+import cn.edu.ahpu.tpc.framework.core.util.ResponseData;
 import cn.edu.ahpu.tpc.framework.web.controller.BaseController;
 
 /**
@@ -83,7 +84,7 @@ public class ProcessController extends BaseController {
 			          ZipInputStream zip = new ZipInputStream(fileInputStream);
 			          repositoryService.createDeployment().addZipInputStream(zip).name(deploymentName).deploy();
 			    } else {
-			          repositoryService.createDeployment().addInputStream(fileName, fileInputStream).deploy();
+			          repositoryService.createDeployment().addInputStream(fileName, fileInputStream).name(deploymentName).deploy();
 			     }			
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -110,4 +111,25 @@ public class ProcessController extends BaseController {
 	      response.getOutputStream().write(b, 0, len);
 	    }
 	  }
+	  
+	  
+		/**
+		 * 根据流程定义ID激活流程,激活的同时把该流程下已经启动的流程实例也全部激活
+		 */
+		@RequestMapping(value = "/activateProcessDefinition", method = RequestMethod.POST)
+		@ResponseBody
+		public ResponseData activateProcessDefinition(String processDefinitionId) {
+			processService.activateProcessDefinition(processDefinitionId);
+			return ResponseData.SUCCESS_NO_DATA;
+		}
+		
+		/**
+		 * 根据流程定义ID挂起流程,挂起的同时把该流程下已经启动的流程实例也全部挂起
+		 */
+		@RequestMapping(value = "/suspendProcessDefinition", method = RequestMethod.POST)
+		@ResponseBody
+		public ResponseData suspendProcessDefinition(String processDefinitionId) {
+			processService.suspendProcessDefinition(processDefinitionId);
+			return ResponseData.SUCCESS_NO_DATA;
+		}
 }

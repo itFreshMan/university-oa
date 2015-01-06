@@ -183,7 +183,7 @@ DeployProcessGrid = Ext.extend(UxGrid, {
                         }
                         
                         var delOperation =  '<a class="zlink" href="javascript:void(0)" onclick="deployProcessGrid.deleteProcessDefinition();"><font color="red">删除</font></a>';
-                        operations += &nbsp; +delOperation;
+                        operations += '&nbsp;' +delOperation;
                         return operations
                     }
             	}

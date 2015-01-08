@@ -24,7 +24,7 @@ public class OaBusiLeaveService {
 	private OaBusiLeaveDao dao;
 
 	@Transactional
-	public void addBusiLeave(OaBusiLeave entity) {
+	public Long addBusiLeave(OaBusiLeave entity) {
 		User curUser = SecurityContextUtil.getCurrentUser();
 		entity.setCreateUser(curUser.getId().intValue());
 		entity.setCreateTime(new Date());
@@ -32,7 +32,8 @@ public class OaBusiLeaveService {
 		entity.setDelFlag(0);
 		entity.setStatus(0);
 		
-		dao.save(entity);
+		Long busiId = dao.save(entity);
+		return busiId;
 	}
 
 

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,10 +28,7 @@ import cn.edu.ahpu.tpc.framework.web.controller.BaseController;
 
 /**
  * 
- * <p>
  * Project: university-oa
- * </p>
- * 
  * @author <a href="jhuaishuang@gmail.com">JHS</a>
  * @version 2015-1-5 下午2:45:44
  * @description:流程管理
@@ -130,6 +126,16 @@ public class ProcessController extends BaseController {
 		@ResponseBody
 		public ResponseData suspendProcessDefinition(String processDefinitionId) {
 			processService.suspendProcessDefinition(processDefinitionId);
+			return ResponseData.SUCCESS_NO_DATA;
+		}
+		
+		/**
+		 * 根据流程定义ID删除流程定义
+		 */
+		@RequestMapping(value = "/deleteProcessDefinition", method = RequestMethod.POST)
+		@ResponseBody
+		public ResponseData deleteProcessDefinition(String processDefinitionId) {
+			processService.deleteProcessDefinition(processDefinitionId);
 			return ResponseData.SUCCESS_NO_DATA;
 		}
 }

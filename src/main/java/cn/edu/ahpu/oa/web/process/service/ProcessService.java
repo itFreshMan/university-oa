@@ -19,15 +19,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.edu.ahpu.common.dao.support.Pagination;
+import cn.edu.ahpu.oa.utils.OAConstants;
+import cn.edu.ahpu.oa.web.process.dao.BusinessDao;
+import cn.edu.ahpu.tpc.framework.core.util.SecurityContextUtil;
+import cn.edu.ahpu.tpc.framework.web.model.admin.User;
 
 
 /**
@@ -35,12 +43,19 @@ import cn.edu.ahpu.common.dao.support.Pagination;
  */
 @Service
 public class ProcessService {
-
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	
     @Autowired
 	private RuntimeService runtimeService;
 	  
 	@Autowired
 	private RepositoryService repositoryService;
+	
+	@Autowired
+	private IdentityService identityService;
+	
+	@Autowired
+	private BusinessDao businessDao;
 	
 	@Autowired
 	private HistoryService historyService;
@@ -89,6 +104,112 @@ public class ProcessService {
 	 */
 	public void suspendProcessDefinition(String processDefinitionId) {
 		repositoryService.suspendProcessDefinitionById(processDefinitionId, true, null);
+	}
+
+	/**
+	 * 根据流程定义ID删除流程定义
+	 */
+	public void deleteProcessDefinition(String processDefinitionId) {
+		ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+		String deploymentId = processDefinition.getDeploymentId();
+	//	repositoryService.deleteDeploymentCascade(deploymentId);
+		//级联删除,会删除当下正在执行的流程信息,以及历史信息;
+		repositoryService.deleteDeployment(deploymentId, true);
+	}
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 启动工作流:startworkflow
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 */
+	
+	/**
+	 * 启动请假流程
+	 * @param businessKey
+	 * @param orgId
+	 * @param hours
+	 */
+	public void startLeaveFlow(String businessKey,Long orgId,Integer hours){
+		User user = SecurityContextUtil.getCurrentUser();
+		String userCode = user.getUserCode();
+		String isMonitor = "";
+		List<String> roleList = businessDao.listAllRoleCode(userCode, orgId);
+		if(roleList == null || roleList.isEmpty()){
+			logger.error("!#########申请人("+userCode+")角色信息为空#########!");
+			return ;
+		}else if(roleList.contains(OAConstants.MONITOR_ROLE_CODE)){
+			isMonitor = "1";
+		}else if(roleList.contains(OAConstants.STUDENT_ROLE_CODE)){
+			isMonitor = "0";
+		}else{
+			logger.error("!#########申请人("+userCode+")角色必须为学生或者班长#########");
+			return ;
+		}
+		
+		List<String> candiateMonitors = businessDao.listUserCodesByOrgIdAndRoleCode(OAConstants.MONITOR_ROLE_CODE,orgId);
+		if(candiateMonitors == null || candiateMonitors.isEmpty()){
+			logger.error("!#########申请人("+userCode+")所在机构的班长角色为空#########!");
+			return ;
+		}
+		String monitors = "";
+		for(String monitor : candiateMonitors){
+			monitors += monitor +",";
+		}
+		if(monitors.endsWith(",")){
+			monitors.substring(0, monitors.length() - 1);
+		}
+		List<String> candiateAssistants = businessDao.listUserCodesByOrgIdAndRoleCode(OAConstants.ASSISTANT_ROLE_CODE,orgId);
+		if(candiateAssistants == null || candiateAssistants.isEmpty()){
+			logger.error("!#########申请人("+userCode+")所在机构的班长角色为空#########!");
+			return ;
+		}
+		String assistants = "";
+		for(String assistant : candiateAssistants){
+			assistants += assistant +",";
+		}
+		if(assistants.endsWith(",")){
+			assistants.substring(0, assistants.length() - 1);
+		}
+		
+		Map<String, Object> variables = new HashMap<String, Object>();
+		variables.put("isMonitor", isMonitor);
+		variables.put("businessKey", businessKey);
+		variables.put("hours", hours);
+		variables.put("monitors", monitors);
+		variables.put("assistants", assistants);
+	    // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
+	    identityService.setAuthenticatedUserId(userCode);
+	    
+	   ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(OAConstants.LEAVE_BILL_PROCESS_KEY, businessKey, variables);
+	   String processInstanceId = processInstance.getProcessInstanceId();
+	   businessDao.updateLeaveInfoAtStartProcess(OAConstants.LEAVE_BILL_PROCESS_KEY,processInstanceId, businessKey);
 	}
 	
 }

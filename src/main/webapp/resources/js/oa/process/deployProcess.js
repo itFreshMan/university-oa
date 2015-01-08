@@ -161,7 +161,7 @@ DeployProcessGrid = Ext.extend(UxGrid, {
                     }
             	},
             	{header:'部署时间',dataIndex:'deploymentTime',width:140,sortable: true},
-            	{header:'是否挂起',dataIndex:'suspensionState',width:80,sortable: true, 
+            	{header:'是否挂起',dataIndex:'suspensionState',width:80,sortable: true,  align:'center',
                     renderer:function(value){
                         if(value == true) {
                             return "<span style='color:red;font-weight:bold;'>挂起</span>";
@@ -172,7 +172,7 @@ DeployProcessGrid = Ext.extend(UxGrid, {
                         }
                     }
             	},
-            	{header:'操作',dataIndex:'opt',width:80,sortable: true, 
+            	{header:'操作',dataIndex:'opt',width:80,sortable: true, align:'center',
                     renderer:function(value, cellmeta, record){
                     	var suspensionState = record.data.suspensionState;
                     	var operations = '';
@@ -182,8 +182,8 @@ DeployProcessGrid = Ext.extend(UxGrid, {
                         	operations =  '<a class="zlink" href="javascript:void(0)" onclick="deployProcessGrid.hangUp();">挂起</a>';
                         }
                         
-                        var delOperation =  '<a class="zlink" href="javascript:void(0)" onclick="deployProcessGrid.deleteProcessDefinition();"><font color="red">删除</font></a>';
-                        operations += '&nbsp;' +delOperation;
+//                        var delOperation =  '<a class="zlink" href="javascript:void(0)" onclick="deployProcessGrid.deleteProcessDefinition();"><font color="red">删除</font></a>';
+//                        operations += '&nbsp;' +delOperation;
                         return operations
                     }
             	}

@@ -1,0 +1,46 @@
+<!--  
+*****************************************************************
+ *description   : 请假申请处理页面
+******************************************************************
+-->
+<%@page contentType="text/html;charset=UTF-8"%>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/resources/js/ext/resources/css/ext-all.css" />
+    <script type="text/javascript" src="/resources/js/ext/ext-base.js"></script>
+    <script type="text/javascript" src="/resources/js/ext/ext-all.js"></script>
+    <script type="text/javascript" src="/resources/js/ext/ext-lang-zh_CN.js"></script>
+    
+	<link rel="stylesheet" type="text/css" href="/resources/css/icons.css" />
+	<link rel="stylesheet" type="text/css" href="/resources/css/index.css" />
+	<link rel="stylesheet" type="text/css" href="/resources/css/oa_icons.css" />
+	<script type="text/javascript" src="/resources/js/ux/ST.ux.util.js"></script>
+	<script type="text/javascript" src="/resources/js/ux/ST.ux.ExtField.js"></script>	
+	<script type="text/javascript" src="/resources/js/ux/Ext.ux.PagePlugins.js"></script>
+	<script type="text/javascript" src="/resources/js/ux/uxForm.js"></script>
+	<script type="text/javascript" src="/resources/js/ux/uxGrid.js"></script>
+	<script type="text/javascript" src="/resources/js/oa/staticData.js"></script>
+	<script type="text/javascript" src="/resources/js/oa/process/form/leave/actApprove.js"></script>
+  </head>
+  <body>
+  <script type="text/javascript">
+  var lineVariable = '${lineVar}';
+  var taskId = '${taskId}';
+  var businessKey = '${businessKey}';
+  var title = '${mapBusi.title}';
+  
+  var orgId = '${mapBusi.orgId}';
+  var orgName = '${mapBusi.orgName}';
+  var beginTime = '${mapBusi.beginTime}';
+  var endTime = '${mapBusi.endTime}';
+  var realTime = '${mapBusi.realTime}';
+  var remark = '${mapBusi.remark}';
+  var procInstId = '${mapBusi.procInstId}';
+  var status = '${mapBusi.status}';
+  var createUser = '${mapBusi.createUser}';
+  var userName = '${mapBusi.userName}';
+  var optionJson = '${optionJson}';
+  </script>
+  </body>
+</html>

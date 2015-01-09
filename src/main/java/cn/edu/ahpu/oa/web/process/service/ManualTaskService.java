@@ -122,10 +122,10 @@ public class ManualTaskService {
 				.taskCandidateUser(userCode).active().orderByTaskCreateTime()
 				.desc().list();
 		// 取得直接分配给个人的任务
-		List<Task> tasksAssignee = taskService.createTaskQuery()
+	/*	List<Task> tasksAssignee = taskService.createTaskQuery()
 				.taskAssignee(userCode).active().orderByTaskCreateTime().desc()
 				.list();
-		tasks.addAll(tasksAssignee);
+		tasks.addAll(tasksAssignee);*/
 		tasks.addAll(taskCandidateGroup);
 		for (Task task : tasks) {
 			Map<String, Object> map = new HashMap<String, Object>();

@@ -1,4 +1,3 @@
-var DATASOURCE_PRJ_COMBO_STORE_URL = '/oa/holiday/getMyProject';
 var PAGESIZE = 20;
 
 /** ************LeaveBillForm*************************** */
@@ -121,7 +120,7 @@ OptionForm = Ext.extend(Ext.ux.Form, {
 	agree : function() {
 		var optionContent = this.remark.getValue();
 		Ext.Ajax.request({
-			url:'/oa/form/dealAct',
+			url:'/oa/process/form/dealAct',
 			params:{
 				taskId:taskId,
 				lineVariable:lineVariable,

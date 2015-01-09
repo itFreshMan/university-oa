@@ -27,12 +27,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import cn.edu.ahpu.oa.web.process.dao.BusinessDao;
 import cn.edu.ahpu.oa.web.process.service.ManualTaskService;
 import cn.edu.ahpu.tpc.framework.core.util.ResponseData;
 import cn.edu.ahpu.tpc.framework.core.util.SecurityContextUtil;
 import cn.edu.ahpu.tpc.framework.web.controller.BaseController;
 import cn.edu.ahpu.tpc.framework.web.model.admin.User;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * 
@@ -97,6 +98,15 @@ public class ManualTaskController extends BaseController{
 		//根据业务主键查找对应历史审批意见
 		List<Map<String, Object>> listOption = manualTaskService.getHistoryOpinionByBusinessKey(processKey, businessKey);
 		modelAndView.addObject("listOption", listOption);
+		//历史审批意见转成JSON字符串
+	    String json = null;
+		try {
+//			DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+			json = mapper.writeValueAsString(listOption);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		modelAndView.addObject("optionJson", json);
 		return modelAndView;
 	}
 	

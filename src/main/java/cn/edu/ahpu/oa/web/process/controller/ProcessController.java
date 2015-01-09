@@ -49,9 +49,49 @@ public class ProcessController extends BaseController {
 	@Autowired
 	private ProcessService processService;
 	
+	/**
+	 * 流程部署页面
+	 * @return
+	 */
 	@RequestMapping(value = "/openDeployPage")
 	public String openDeployPage() {
 		return "/oa/process/deployProcess";
+	}
+	
+//	/**
+//	 * 打开所有运行中流程页面
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/openRunningProcess")
+//	public String openRunningProcessPage() {
+//		return "/oa/process/runningProcess";
+//	}
+//
+//	/**
+//	 * 打开历史流程页面
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/openHistoryProcessPage")
+//	public String openHistoryProcessPage() {
+//		return "/oa/process/historyProcess";
+//	}
+//	
+//	/**
+//	 * 打开当前用户参与的任务页面(已办任务)
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/openInvolvedProcessProcessPage")
+//	public String openInvolvedProcessProcessPage() {
+//		return "/oa/process/involvedProcess";
+//	}
+	
+	/**
+	 * 打开我的流程页面
+	 * @return
+	 */
+	@RequestMapping(value = "/openMyProcessPage")
+	public String openMyProcessPage() {
+		return "/oa/process/myProcess";
 	}
 	
 	/**
@@ -137,5 +177,18 @@ public class ProcessController extends BaseController {
 		public ResponseData deleteProcessDefinition(String processDefinitionId) {
 			processService.deleteProcessDefinition(processDefinitionId);
 			return ResponseData.SUCCESS_NO_DATA;
+		}
+		
+		
+		/**
+		 * 分页查询当前用户发起的流程信息
+		 * @param start
+		 * @param limit
+		 * @return
+		 */
+		@RequestMapping(value = "/myProcess/list", method = RequestMethod.POST)
+		@ResponseBody
+		public Pagination<Map<String, Object>> getMyProcess(Integer start, Integer limit, String processKey) {
+			return processService.getMyProcess(start, limit, processKey);
 		}
 }

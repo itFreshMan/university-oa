@@ -1,6 +1,5 @@
 package cn.edu.ahpu.oa.web.process.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import cn.edu.ahpu.common.dao.hibernate4.HibernateBaseDaoImpl;
-import cn.edu.ahpu.oa.utils.OAConstants;
+import cn.edu.ahpu.common.dao.support.Pagination;
+import cn.edu.ahpu.oa.utils.OaAttitude;
+import cn.edu.ahpu.oa.utils.OaConstants;
 import cn.edu.ahpu.oa.web.model.OaProcessOption;
 
 @Repository
@@ -69,7 +70,7 @@ public class BusinessDao extends HibernateBaseDaoImpl<OaProcessOption, Long>{
 	public void updateLeaveInfoAtStartProcess(String processKey,String processInstanceId,
 			String businessKey) {
 		String hql = "";
-		if(processKey.equals(OAConstants.LEAVE_BILL_PROCESS_KEY)){
+		if(processKey.equals(OaConstants.LEAVE_BILL_PROCESS_KEY)){
 			hql = "update OaBusiLeave t set t.status='1',t.procInstId = ? where t.busiId = ?";
 		}
 		if(StringUtils.isNotEmpty(hql)){
@@ -91,7 +92,7 @@ public class BusinessDao extends HibernateBaseDaoImpl<OaProcessOption, Long>{
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getBusinessInfo(String processKey, String businessKey) {
 		String hql = "";
-		if(processKey.equals(OAConstants.LEAVE_BILL_PROCESS_KEY)){
+		if(processKey.equals(OaConstants.LEAVE_BILL_PROCESS_KEY)){
 			hql = "select new Map(t.title as title, t.remark as remark,b.userName as userName,t.realTime as realTime,t.beginTime as beginTime," +
 					"	t.endTime as endTime,t.orgId as orgId,c.name as orgName) from OaBusiLeave t,User b,Organization c" +
 					" where t.createUser = b.id and t.orgId = c.id and t.busiId = ?";
@@ -100,6 +101,23 @@ public class BusinessDao extends HibernateBaseDaoImpl<OaProcessOption, Long>{
 			return null;
 		}
 		return this.findByHQL(hql, Long.valueOf(businessKey));
+	}
+
+	public void updateBusiByAttitude(String processKey, String businessKey,OaAttitude attitude) {
+		Integer status = 0;
+		if(attitude.equals(OaAttitude.AGREE)){
+			status = 2;
+		}else if(attitude.equals(OaAttitude.DISAGREE)){
+			status = 3;
+		}
+		
+		String hql = "";
+		if(processKey.equals(OaConstants.LEAVE_BILL_PROCESS_KEY)) {		//出差派遣流程
+			hql = "update OaBusiLeave t set t.status=? where t.busiId = ?";
+		}
+		if(StringUtils.isNotEmpty(hql) && status > 1) {
+			this.bulkUpdate(hql, status,Long.valueOf(businessKey));			
+		}
 	}
 	
 }

@@ -66,18 +66,8 @@ MyProcessGrid = Ext.extend(UxGrid, {
                                           sm,    
                 {header:'流程类型',dataIndex:'key',width:100,sortable: true,
 	          		renderer:function(value, cellmeta, record){
-	          			if(value == 'dispatchProcess') {
-	          				return "<span style='color:#DB9370;font-weight:bold;'>出差派遣</span>";
-	          			}else if(value == 'leaveProcess') {
-	          				return "<span style='color:green;font-weight:bold;'>请假</span>";
-	          			}else if(value == 'overTimeProcess') {
-	          				return "<span style='color:red;font-weight:bold;'>加班</span>";
-	          			}else if(value == 'paymentProcess') {
-	          				return "<span style='color:blue;font-weight:bold;'>费用报销</span>";
-	          			}else if(value == 'dispatchReturnProcess') {
-	          				return "<span style='color:#800080;font-weight:bold;'>派遣返回流程</span>";
-	          			}else if(value == 'borrowMoneyProcess') {
-	          				return "<span style='color:#8A2BE2;font-weight:bold;'>出差借款流程</span>";
+	          			if(value == 'leaveBill') {
+	          				return "<span style='color:#DB9370;font-weight:bold;'>请假流程</span>";
 	          			}else {
 	          				return value;
 	          			}
@@ -102,7 +92,7 @@ MyProcessGrid = Ext.extend(UxGrid, {
                 },               
                 {header:'查看详情',dataIndex:'key',width:100,sortable: true,
                 	renderer:function(value,metadata){
-                		return '<a class="zlink" href="javascript:void(0)" onclick="myProcessGrid.viewProcessDetails();">查看详情</a>';
+                		return '<a class="zlink" href="javascript:void(0);" onclick="myProcessGrid.viewProcessDetails();">查看详情</a>';
                 	}
                 },
 	            {header:'事由说明',dataIndex:'title',width:180,sortable: true,
@@ -150,11 +140,6 @@ MyProcessGrid = Ext.extend(UxGrid, {
     	var processInstanceId = record.data.processInstanceId;
     	window.open("/cps/process/showProcessTrack?hisFlag=0&processInstanceId=" + processInstanceId);
     },
-    lookApproveTrace: function() {//查看申请信息及审批意见
-    	var record = this.selectedRecord();
-    	var businessKey = record.data.businessKey;
-    	window.open("/cps/process/showProcessOption/" + businessKey);   
-    },
     onQueryClick: function() {
 		var customerId = Ext.getCmp("customerId_query").getValue();
 		var custName = Ext.getCmp("custName_query").getValue();
@@ -166,46 +151,11 @@ MyProcessGrid = Ext.extend(UxGrid, {
     	var vrecord = records[0];
     	var key = vrecord.get("key");
     	var businessKey = vrecord.get("businessKey");
-		if(key == 'dispatchProcess') {
-			var url = "/oa/dispatch/showDispatchProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'leaveProcess') {
-			var url = "/oa/holiday/holidayView?businessKey="+businessKey;
+		if(key == 'leaveBill') {
+			var url = "/oa/leave/showLeaveBillProcessOption?businessKey="+businessKey;
 			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
 			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
 			DETAILS_VIEW_WINDOW.setTitle("请假流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'overTimeProcess') {
-			var url = "/oa/overtime/showOvertimeProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("加班流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'dispatchReturnProcess') {
-			var url = "/oa/dispatch/showReturnProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差返回流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'paymentProcess'){
-			var url = "/oa/costBaoXiao/showPaymentProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("费用报销流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'borrowMoneyProcess'){
-			var url = "/oa/borrow/borrowView?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差借款流程"+businessKey+"---详情 ");
 			DETAILS_VIEW_WINDOW.html = html;
 			DETAILS_VIEW_WINDOW.show();
 		}

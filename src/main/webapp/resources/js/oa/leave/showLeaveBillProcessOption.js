@@ -87,105 +87,7 @@ LeaveBillForm = Ext.extend(Ext.ux.Form, {
 	}
 
 });
-/** ************LeaveBillForm*************************** */
-OptionForm = Ext.extend(Ext.ux.Form, {
-	constructor : function() {
-		this.remark = this.createTextArea('审批意见', 'remark',60, '100%');
-		
-		OptionForm.superclass.constructor.call(this, {
-			anchor : '100%',
-			height:110,
-			region:"south",
-			labelWidth : 100,
-			labelAlign : 'right',
-			frame : true,
-			bodyStyle : "padding: 0px 0px 0 0",
-			layout : 'form',
-//			layoutConfig : {
-//				columns : 2
-//			},
-			items :this.remark,
-			buttonAlign : 'center',
-			buttons : [ {
-				text : '批准',
-				width : 20,
-				iconCls : 'save',
-				hidden : false,
-				handler : this.agree,
-				scope : this
-			}, {
-				text : '不批准',
-				width : 20,
-				iconCls : 'delete',
-				handler : this.noAgree,
-				scope : this
-			} ]
-		});
-		
-	},
-	agree : function() {
-		var optionContent = this.remark.getValue();
-		Ext.Ajax.request({
-			url:'/oa/process/form/dealAct',
-			params:{
-				taskId:taskId,
-				lineVariable:lineVariable,
-				value:1,
-				businessKey:businessKey,
-				optionContent:optionContent
-			},
-			method:'post',
-		    waitMsg:"正在保存信息，请稍候！",
-		    waitTitle:"提示",
-		    success:function(form,action){
-		    	Ext.Msg.show({   
-	               title : '系统提示',   
-	               msg : BLANKSTR +'保存成功！' + BLANKSTR,   
-	               buttons: Ext.Msg.OK,   
-	               fn: function() {  
-	            	   window.parent.pendPoolGrid.store.load();
-		               window.parent.ACT_DEAL_WINDOW.close();
-	               },   
-	               closable: false   
-	          	}); 
-		   	},
-		   	failure:function(form,action){
-		    	Ext.MessageBox.alert('提示',BLANKSTR +'保存失败！' + BLANKSTR);
-		   	}
-		});
-	},
-	noAgree : function() {
-		var optionContent = this.remark.getValue();
-		Ext.Ajax.request({
-			url:'/oa/process/form/dealAct',
-			params:{
-				taskId:taskId,
-				lineVariable:lineVariable,
-				value:0,
-				businessKey:businessKey,
-				optionContent:optionContent
-			},
-			method:'post',
-		    waitMsg:"正在保存信息，请稍候！",
-		    waitTitle:"提示",
-		    success:function(form,action){
-		    	Ext.Msg.show({   
-	               title : '系统提示',   
-	               msg : BLANKSTR +'保存成功！' + BLANKSTR,   
-	               buttons: Ext.Msg.OK,   
-	               fn: function() {  
-	            	   window.parent.pendPoolGrid.store.load();
-		               window.parent.ACT_DEAL_WINDOW.close();
-	               },   
-	               closable: false   
-	          	}); 
-		   	},
-		   	failure:function(form,action){
-		    	Ext.MessageBox.alert('提示',BLANKSTR +'保存失败！' + BLANKSTR);
-		   	}
-		});
-	}
-});
+	
 /**************************PersonMemberGrid 共同借款人表格*******************************************/
 PersonMemberGrid = Ext.extend(UxGrid, {
     store:null,
@@ -237,10 +139,9 @@ Ext.onReady(function() {
     personMemberGrid = new PersonMemberGrid();
     var optionList = Ext.decode(optionJson);
     personMemberGrid.store.loadData(optionList);
-    optionForm = new OptionForm();
     new Ext.Viewport({
     	layout: 'border',
     	height: Ext.getBody().getViewSize().height,
-    	items:[leaveBillForm,personMemberGrid,optionForm]
+    	items:[leaveBillForm,personMemberGrid]
     });
 });

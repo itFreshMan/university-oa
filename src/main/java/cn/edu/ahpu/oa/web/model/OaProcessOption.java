@@ -5,11 +5,13 @@ package cn.edu.ahpu.oa.web.model;
 // Generated 2015-1-7 15:15:58 by Hibernate Tools 3.2.2.GA
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;

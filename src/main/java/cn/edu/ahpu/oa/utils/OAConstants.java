@@ -5,7 +5,7 @@ package cn.edu.ahpu.oa.utils;
  * @author JHS
  * @date 2014-12-1 下午3:59:57
  */
-public class OAConstants {
+public class OaConstants {
 	//请假流程key
 	public static final String LEAVE_BILL_PROCESS_KEY = "leaveBill";
 	
@@ -14,4 +14,5 @@ public class OAConstants {
 	public static final String STUDENT_ROLE_CODE = "ROLE_STUDENT";
 	public static final String MONITOR_ROLE_CODE = "ROLE_MONITOR";
 	public static final String ASSISTANT_ROLE_CODE = "ROLE_ASSISTANT";
+	public static final String DIRECTOR_ROLE_CODE = "ROLE_DIRECTOR";
 }

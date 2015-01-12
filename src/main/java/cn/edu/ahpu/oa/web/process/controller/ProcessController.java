@@ -69,15 +69,15 @@ public class ProcessController extends BaseController {
 		return "/oa/process/deployProcess";
 	}
 	
-//	/**
-//	 * 打开所有运行中流程页面
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/openRunningProcess")
-//	public String openRunningProcessPage() {
-//		return "/oa/process/runningProcess";
-//	}
-//
+	/**
+	 * 打开所有运行中流程页面
+	 * @return
+	 */
+	@RequestMapping(value = "/openRunningProcess")
+	public String openRunningProcessPage() {
+		return "/oa/process/runningProcess";
+	}
+
 //	/**
 //	 * 打开历史流程页面
 //	 * @return
@@ -317,6 +317,16 @@ public class ProcessController extends BaseController {
 				e.printStackTrace();
 			}
 	        
+		}
+		
+		
+		/**
+		 * 取得运行中流程列表
+		 */
+		@RequestMapping(value = "/runningProcess/list", method = RequestMethod.POST)
+		@ResponseBody
+		public Pagination<Map<String, Object>> getRunningProcessList(Integer start, Integer limit,String processKey) {
+			return processService.getRunningProcessList(start, limit,processKey);
 		}
 		
 }

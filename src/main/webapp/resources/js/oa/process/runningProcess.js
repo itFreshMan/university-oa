@@ -18,7 +18,32 @@ RunningProcessGrid = Ext.extend(UxGrid, {
             		{name:'processKey'},{name:'startTime'},{name:'title'},{name:'remark'}
             ])
         });
-    	
+    	var processKey = new Ext.form.ComboBox({
+            fieldLabel: '流程类型',
+            emptyText: '请选择...',
+            width: 200,
+            mode: 'local',
+            name: 'code',
+            forceSelection: true,
+            triggerAction: 'all',
+            displayField:'name',
+            valueField:'code',
+            editable:false,
+            store: new Ext.data.Store({
+                proxy: new Ext.data.MemoryProxy(PROCESS_KEY_QUERY),
+                reader: new Ext.data.JsonReader({},new Ext.data.Record.create([{name:'code'},{name:'name'}]))
+            })
+        });
+    	processKey.store.load();
+    	this.vtbar = new Ext.Toolbar({
+            items:[
+            	{xtype : 'label', text : '流程类型：'},processKey,
+            	'-',{text:'查询',iconCls: 'query',handler:function() {
+            		runningProcessGrid.store.baseParams = {processKey:processKey.getValue()};
+            		runningProcessGrid.store.load({params:{start:0,limit:PAGESIZE}});
+            	},scope:this}
+            ]
+        });
     	this.vbbar= this.createPagingToolbar(PAGESIZE);
 
         var sm = new Ext.grid.CheckboxSelectionModel({singleSelect:true}); 
@@ -39,23 +64,13 @@ RunningProcessGrid = Ext.extend(UxGrid, {
             cm: new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
                                           sm,  
 	            {header:'流程类型',dataIndex:'processKey',width:100,sortable: true,
-	          		renderer:function(value, cellmeta, record){
-	          			if(value == 'dispatchProcess') {
-	          				return "<span style='color:#DB9370;font-weight:bold;'>出差派遣</span>";
-	          			}else if(value == 'leaveProcess') {
-	          				return "<span style='color:green;font-weight:bold;'>请假</span>";
-	          			}else if(value == 'overTimeProcess') {
-	          				return "<span style='color:red;font-weight:bold;'>加班</span>";
-	          			}else if(value == 'paymentProcess') {
-	          				return "<span style='color:blue;font-weight:bold;'>费用报销</span>";
-	          			}else if(value == 'dispatchReturnProcess') {
-	          				return "<span style='color:#800080;font-weight:bold;'>派遣返回流程</span>";
-	          			}else if(value == 'borrowMoneyProcess') {
-	          				return "<span style='color:#8A2BE2;font-weight:bold;'>出差借款流程</span>";
+	          		renderer:function(value, cellmeta, record){	
+	          			if(value == 'leaveBill') {
+	          				return "<span style='color:#DB9370;font-weight:bold;'>请假流程</span>";
 	          			}else {
 	          				return value;
 	          			}
-	          		}
+          			}
 	            },               
                 {header:'查看详情',dataIndex:'key',width:100,sortable: true,
                 	renderer:function(value,metadata){
@@ -84,7 +99,11 @@ RunningProcessGrid = Ext.extend(UxGrid, {
             	{header:'流程启动人',dataIndex:'userName',width:100,sortable: true},
                 {header:'流程启动时间',dataIndex:'startTime',width:140,sortable: true},
             	{header:'流程定义ID',dataIndex:'processDefinitionId',width:180,sortable: true, hidden:true},
-            	{header:'当前节点',dataIndex:'activityName',width:140,sortable: true},
+            	{header:'当前节点',dataIndex:'activityName',width:140,sortable: true,
+            		renderer:function(value, cellmeta, record){
+            			return '<a class="redlink" title="点击查看流程图" href="javascript:void(0)" onclick="runningProcessGrid.lookGraphTrace();">' + value + '</a>';
+            			}
+            	},
             	{header:'是否挂起',dataIndex:'suspensionState',width:80,sortable: true,
             		renderer:function(value, cellmeta, record){
             			if(value == false) {
@@ -96,64 +115,18 @@ RunningProcessGrid = Ext.extend(UxGrid, {
             			}
             		}
             	},
-//            	{header:'操作',dataIndex:'opt',width:60,sortable: true,
-//            		renderer:function(value, cellmeta, record){
-//            			var suspensionState = record.data.suspensionState;
-//            			if(suspensionState == true) {
-//            				return '<a class="redlink" href="javascript:void(0)" onclick="runningProcessGrid.activate();">激活</a>';
-//            			}else {
-//            				return '<a class="zlink" href="javascript:void(0)" onclick="runningProcessGrid.hangUp();">挂起</a>';
-//            			}
-//            		}
-//            	},
             	{header:'强制结束',dataIndex:'forceOver',width:60,sortable: true,
             		renderer:function(value, cellmeta, record){
             			return '<a class="zlink" href="javascript:void(0)" onclick="runningProcessGrid.forceOver();">强制结束</a>';
             		}
             	}
             ]),
+            tbar: this.vtbar,
             bbar: this.vbbar,
             ds: this.store
         });
     },
-    activate: function() {//激活流程
-    	var record = this.selectedRecord();
-    	var processInstanceId = record.data.processInstanceId;
-    	Ext.Msg.confirm("提醒信息", "确定要激活流程实例【" + processInstanceId + "】吗？",function(btn){
-			if (btn == 'yes') {
-		       	Ext.Ajax.request({
-			       	   url:'/oa/process/activateProcessInst',
-			       	   method : 'POST', 
-			       	   params: { processInstanceId: processInstanceId},
-		               success: function(form, action) { 
-			               Ext.MessageBox.alert("系统提示:", BLANKSTR + "激活成功!" + BLANKSTR);
-			               runningProcessGrid.vbbar.doLoad(runningProcessGrid.vbbar.cursor);		               },
-		               failure: function(form, action) {
-		            	   Ext.MessageBox.alert("系统提示:", BLANKSTR + "激活失败!" + BLANKSTR);
-		               }
-			       	});					
-			}
-    	});	
-    },
-    hangUp: function() {//挂起流程
-    	var record = this.selectedRecord();
-    	var processInstanceId = record.data.processInstanceId;
-    	Ext.Msg.confirm("提醒信息", "确定要挂起流程实例【" + processInstanceId + "】吗？",function(btn){
-			if (btn == 'yes') {
-		       	Ext.Ajax.request({
-			       	   url:'/oa/process/suspendProcessInst',
-			       	   method : 'POST', 
-			       	   params: { processInstanceId: processInstanceId},
-		               success: function(form, action) { 
-			               Ext.MessageBox.alert("系统提示:", BLANKSTR + "挂起成功!" + BLANKSTR);
-			               runningProcessGrid.vbbar.doLoad(runningProcessGrid.vbbar.cursor);		               },
-		               failure: function(form, action) {
-		            	   Ext.MessageBox.alert("系统提示:", BLANKSTR + "挂起失败!" + BLANKSTR);
-		               }
-			       	});					
-			}
-    	});	
-    },
+   
     forceOver: function() {//强制结束流程
     	var record = this.selectedRecord();
     	var processInstanceId = record.data.processInstanceId;
@@ -177,7 +150,7 @@ RunningProcessGrid = Ext.extend(UxGrid, {
     lookGraphTrace : function() {//查看流程图
     	var record = this.selectedRecord();
     	var processInstanceId = record.data.processInstanceId;
-    	window.open("/oa/process/showProcessTrack?hisFlag=0&processInstanceId=" + processInstanceId);
+    	window.open("/oa/process/showProcessTrack?historyFlag=0&processInstanceId=" + processInstanceId);
     },
     lookApproveTrace: function() {//查看申请信息及审批意见
     	var record = this.selectedRecord();
@@ -199,46 +172,11 @@ RunningProcessGrid = Ext.extend(UxGrid, {
     	var vrecord = records[0];
     	var key = vrecord.get("processKey");
     	var businessKey = vrecord.get("businessKey");
-		if(key == 'dispatchProcess') {
-			var url = "/oa/dispatch/showDispatchProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'leaveProcess') {
-			var url = "/oa/holiday/holidayView?businessKey="+businessKey;
+    	if(key == 'leaveBill') {
+			var url = "/oa/leave/showLeaveBillProcessOption?businessKey="+businessKey;
 			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
 			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
 			DETAILS_VIEW_WINDOW.setTitle("请假流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'overTimeProcess') {
-			var url = "/oa/overtime/showOvertimeProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("加班流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'dispatchReturnProcess') {
-			var url = "/oa/dispatch/showReturnProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差返回流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'paymentProcess'){
-			var url = "/oa/costBaoXiao/showPaymentProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("费用报销流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'borrowMoneyProcess'){
-			var url = "/oa/borrow/borrowView?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差借款流程"+businessKey+"---详情 ");
 			DETAILS_VIEW_WINDOW.html = html;
 			DETAILS_VIEW_WINDOW.show();
 		}

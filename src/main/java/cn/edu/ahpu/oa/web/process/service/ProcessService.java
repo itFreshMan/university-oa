@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import cn.edu.ahpu.common.dao.support.Pagination;
 import cn.edu.ahpu.oa.utils.OaConstants;
@@ -301,4 +302,31 @@ public class ProcessService {
 		
 		return pagination;
 	}
+
+	public Pagination<Map<String, Object>> getRunningProcessList(Integer start,Integer limit,String processKey) {
+			
+		Pagination<Map<String, Object>> pagination = processApiDao.getRunningProcess(start, limit,processKey);
+		for(Map<String, Object> mapResult: pagination.getResult()) {
+			String processDefinitionId = mapResult.get("processDefinitionId").toString();
+			/*String processKey = processDefinitionId.split(":")[0];
+			mapResult.put("processKey", processKey);*/
+			String activityId = mapResult.get("activityId").toString();
+			if(StringUtils.hasText(activityId)) {
+				try{
+					ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
+				    for (ActivityImpl activityImpl : ((ProcessDefinitionEntity) processDefinition).getActivities()) {
+				    	if(activityId.equals(activityImpl.getId())) {
+				    		mapResult.put("activityName", activityImpl.getProperty("name"));
+					    	break;
+				    	}
+				    }						
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			
+			}			
+		}
+		return pagination;
+	}
+
 }

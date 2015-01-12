@@ -82,6 +82,32 @@ public class ProcessApiDao extends HibernateBaseDaoImpl<OaProcessOption, Long>{
 			sql.append(" and tt.KEY_ = :processKey");
 		}
 		sql.append(" order by tt.START_TIME_ desc");
-		return jdbcPager.queryPageDb2(sql.toString(), start, limit, paramMap);
+		return jdbcPager.queryPage(sql.toString(), start, limit, paramMap);
+	}
+
+
+
+	public Pagination<Map<String, Object>> getRunningProcess(Integer start,Integer limit, String processKey) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("leaveBillKey", OaConstants.LEAVE_BILL_PROCESS_KEY);
+		StringBuffer sql = new StringBuffer("select m.ACT_ID_ as \"activityId\",m.PROC_DEF_ID_ as \"processDefinitionId\"," +
+				"m.PROC_INST_ID_ as \"processInstanceId\",m.BUSINESS_KEY_ as \"businessKey\",m.START_TIME_ as \"startTime\"," +
+				"m.END_TIME_ as \"endTime\",m.DELETE_REASON_ as \"deleteReason\",m.USER_NAME as \"userName\"," +
+				"m.TITLE as \"title\",m.REMARK as \"remark\",m.KEY_ as \"processKey\"");
+		sql.append(" from(");
+		sql.append("select e.ACT_ID_,e.PROC_DEF_ID_,e.PROC_INST_ID_,e.BUSINESS_KEY_,e.START_TIME_,e.END_TIME_," +
+				"e.DELETE_REASON_,g.USER_NAME,h.TITLE,h.REMARK,e.KEY_" +
+				" from(select t.ID_, t.PROC_INST_ID_, t.BUSINESS_KEY_, t.PROC_DEF_ID_, t.START_TIME_, t.END_TIME_,START_USER_ID_, t.DELETE_REASON_ , c.KEY_" +
+				",b.ACT_ID_ from ACT_HI_PROCINST t,ACT_RU_EXECUTION b,ACT_RE_PROCDEF c" +
+				" where t.PROC_INST_ID_ = b.PROC_INST_ID_ and t.PROC_DEF_ID_ = c.ID_ and c.KEY_ = :leaveBillKey) e" +
+				" left join TPC_USER g on e.START_USER_ID_=g.USER_CODE" +
+				" left join oa_busi_leave h on e.BUSINESS_KEY_ = h.BUSI_ID");
+		sql.append(") m where 1=1 ");
+		if(StringUtils.hasText(processKey) && !processKey.equals("-1")) {
+			paramMap.put("processKey", processKey);
+			sql.append(" and m.KEY_ = :processKey");
+		}
+		sql.append(" order by m.START_TIME_ desc");
+		return jdbcPager.queryPage(sql.toString(), start, limit, paramMap);		
 	}
 }

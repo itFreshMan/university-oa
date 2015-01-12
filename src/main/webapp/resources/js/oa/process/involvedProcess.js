@@ -26,6 +26,7 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
             triggerAction: 'all',
             displayField:'name',
             valueField:'code',
+            editable:false,
             store: new Ext.data.Store({
                 proxy: new Ext.data.MemoryProxy(PROCESS_KEY_QUERY),
                 reader: new Ext.data.JsonReader({},new Ext.data.Record.create([{name:'code'},{name:'name'}]))

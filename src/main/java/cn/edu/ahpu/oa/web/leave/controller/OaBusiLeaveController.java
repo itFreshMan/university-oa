@@ -79,6 +79,7 @@ public class OaBusiLeaveController extends BaseController {
 	    String json = null;
 		try {
 //			DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+			mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 			json = mapper.writeValueAsString(listOption);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

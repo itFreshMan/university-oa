@@ -13,8 +13,13 @@
 
 package cn.edu.ahpu.oa.web.process.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.activiti.engine.FormService;
 import org.activiti.engine.form.FormProperty;
@@ -34,6 +39,8 @@ import cn.edu.ahpu.tpc.framework.web.controller.BaseController;
 import cn.edu.ahpu.tpc.framework.web.model.admin.User;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ibm.db2.jcc.sqlj.k;
+import com.ibm.db2.jcc.t2zos.v;
 
 /**
  * 
@@ -97,11 +104,24 @@ public class ManualTaskController extends BaseController{
 		
 		//根据业务主键查找对应历史审批意见
 		List<Map<String, Object>> listOption = manualTaskService.getHistoryOpinionByBusinessKey(processKey, businessKey);
+		/*
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Map<String, Object> map :listOption){
+			Iterator iterator = map.entrySet().iterator();
+			while(iterator.hasNext()){
+				Entry<String, Object> entry = (Entry<String, Object>) iterator.next();
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				if(value != null && value instanceof Date){
+					map.put(key, df.format(value));
+				}
+			}
+		}*/
 		modelAndView.addObject("listOption", listOption);
 		//历史审批意见转成JSON字符串
 	    String json = null;
 		try {
-//			DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+			mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 			json = mapper.writeValueAsString(listOption);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

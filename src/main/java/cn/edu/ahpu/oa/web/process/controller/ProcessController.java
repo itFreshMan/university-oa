@@ -3,6 +3,10 @@ package cn.edu.ahpu.oa.web.process.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -10,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.history.HistoricActivityInstance;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bpm.engine.extend.diagram.ProcessDiagramGeneratorExtend;
 
 import cn.edu.ahpu.common.dao.support.Pagination;
 import cn.edu.ahpu.oa.utils.file.FileCommonOperate;
@@ -49,6 +57,9 @@ public class ProcessController extends BaseController {
 	@Autowired
 	private ProcessService processService;
 	
+	@Autowired
+	private ProcessDiagramGeneratorExtend generatorExtend;
+	
 	/**
 	 * 流程部署页面
 	 * @return
@@ -76,14 +87,14 @@ public class ProcessController extends BaseController {
 //		return "/oa/process/historyProcess";
 //	}
 //	
-//	/**
-//	 * 打开当前用户参与的任务页面(已办任务)
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/openInvolvedProcessProcessPage")
-//	public String openInvolvedProcessProcessPage() {
-//		return "/oa/process/involvedProcess";
-//	}
+	/**
+	 * 打开当前用户参与的任务页面(已办任务)
+	 * @return
+	 */
+	@RequestMapping(value = "/openInvolvedProcessProcessPage")
+	public String openInvolvedProcessProcessPage() {
+		return "/oa/process/involvedProcess";
+	}
 	
 	/**
 	 * 打开我的流程页面
@@ -191,4 +202,121 @@ public class ProcessController extends BaseController {
 		public Pagination<Map<String, Object>> getMyProcess(Integer start, Integer limit, String processKey) {
 			return processService.getMyProcess(start, limit, processKey);
 		}
+		
+		/**
+		 * 分页查询当前用户发起的流程信息
+		 * @param start
+		 * @param limit
+		 * @return
+		 */
+		@RequestMapping(value = "/involvedProcess/list", method = RequestMethod.POST)
+		@ResponseBody
+		public Pagination<Map<String, Object>> getInvolvedProcess(Integer start, Integer limit, String processKey) {
+			return processService.getInvolvedProcess(start, limit, processKey);
+		}
+		
+		
+		/**
+		 * 根据流程实例ID和是否已经结束流程标志动态显示流程图及运行轨迹
+		 * @param processInstanceId 流程实例ID
+		 * @param historyFlag 是否历史流程 1:是 , 0:否
+		 * @return
+		 */
+		@RequestMapping(value = "/showProcessTrack")
+		public ModelAndView showProcessTrack(String processInstanceId, Integer historyFlag) {
+			String showProcessUrl = "";
+			ModelAndView modelAndView = new ModelAndView("/oa/process/showProcessTrack");
+			if(historyFlag == 1) {
+				showProcessUrl = "/oa/process/showHistoryProcessImage?processInstanceId=" + processInstanceId;
+			}else if(historyFlag == 0) {
+				showProcessUrl = "/oa/process/showProcessImage?processInstanceId=" + processInstanceId;
+			}
+			List<Map<String, Object>> runningAct = new ArrayList<Map<String, Object>>();
+			List<HistoricActivityInstance> activityInstances = historyService.createHistoricActivityInstanceQuery()
+	                .processInstanceId(processInstanceId).orderByHistoricActivityInstanceId().asc().list();
+	        for (HistoricActivityInstance historicActivityInstance : activityInstances) {
+//	        	if(historicActivityInstance.getActivityType().equals("userTask") || historicActivityInstance.getActivityType().equals("serviceTask")){
+	        	if(historicActivityInstance.getActivityType().equals("userTask")){
+	        		Map<String, Object> tempMap = new HashMap<String, Object>();
+                	tempMap.put("actName", historicActivityInstance.getActivityName());
+                	if (historicActivityInstance.getEndTime() == null) {// 节点正在运行中
+	                	tempMap.put("curActFlag", true);
+	                }
+                	runningAct.add(tempMap);
+	        	}
+	        }		
+	        
+	        modelAndView.addObject("historyFlag", historyFlag);
+	        modelAndView.addObject("runningAct", runningAct);
+			modelAndView.addObject("showProcessUrl", showProcessUrl);
+			//查找环节审批轨迹
+//			List<CpsProcessOption> optionList = optionDao.getProcessOptionList(processInstanceId);
+//			modelAndView.addObject("optionList", optionList);
+			return modelAndView;
+		}
+		
+		/**
+		 * 显示运行中流程图,正在运行的环节高亮显示
+		 * @param processDefinitionId
+		 * @param processInstanceId
+		 */
+		@RequestMapping(value = "/showProcessImage")
+		public void showProcessImage(String processInstanceId, HttpServletResponse resp) {
+	        try {
+	        	InputStream inputStream = generatorExtend.generateDiagram(processInstanceId);
+				 if (inputStream != null) {  
+			            resp.setContentType("image/png");  
+			            OutputStream out = resp.getOutputStream();  
+			            try {  
+			                byte[] bs = new byte[1024];  
+			                int n = 0;  
+			                while ((n = inputStream.read(bs)) != -1) {  
+			                    out.write(bs, 0, n);  
+			                }  
+			                out.flush();  
+			            } catch (Exception ex) {  
+			                ex.printStackTrace();  
+			            } finally {  
+			            	inputStream.close();  
+			                out.close();  
+			            }  
+			        }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	        
+		}
+		
+		/**
+		 * 显示历史流程图
+		 * @param processInstanceId
+		 * @param resp
+		 */
+		@RequestMapping(value = "/showHistoryProcessImage")
+		public void showHistoryProcessImage(String processInstanceId, HttpServletResponse resp) {
+	        try {
+	        	InputStream inputStream = generatorExtend.generateHistoryDiagram(processInstanceId);
+				 if (inputStream != null) {  
+			            resp.setContentType("image/png");  
+			            OutputStream out = resp.getOutputStream();  
+			            try {  
+			                byte[] bs = new byte[1024];  
+			                int n = 0;  
+			                while ((n = inputStream.read(bs)) != -1) {  
+			                    out.write(bs, 0, n);  
+			                }  
+			                out.flush();  
+			            } catch (Exception ex) {  
+			                ex.printStackTrace();  
+			            } finally {  
+			            	inputStream.close();  
+			                out.close();  
+			            }  
+			        }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	        
+		}
+		
 }

@@ -36,4 +36,10 @@
 	<bean id="formService" factory-bean="processEngine"
 		factory-method="getFormService" />
 		
+		 <!-- 生成流程图的类 -->
+    <bean id="processDiagramGeneratorExtend" class="com.bpm.engine.extend.diagram.ProcessDiagramGeneratorExtend">
+    	<constructor-arg index="0" ref="repositoryService"></constructor-arg>
+    	<constructor-arg index="1" ref="runtimeService"></constructor-arg>
+    	<constructor-arg index="2" ref="historyService"></constructor-arg>
+    </bean>
 </beans>

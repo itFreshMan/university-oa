@@ -13,16 +13,23 @@
 	<div class="panel panel-danger">
 	  <div class="panel-heading">流程运行轨迹</div>
 		    <table>
-	  			<th>
-	  				<td>开始&nbsp;&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-					<c:forEach var="data" items="${optionList}" varStatus="status"> 
+	  			<tr>
+	  				<td><b>开始</b>&nbsp;&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<%-- <c:forEach var="data" items="${optionList}" varStatus="status"> 
 							<td>${data.actName}&nbsp;&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-					</c:forEach> 
+					</c:forEach>  --%>
 					<c:forEach var="data" items="${runningAct}" varStatus="status"> 
-							<td><font color="red">${data.actName}</font></td>
+						<c:choose>
+							<c:when test="${data.curActFlag}">
+								<td><font color='red'><b>${data.actName}</b></font></td>
+							</c:when>
+							<c:otherwise>  
+								<td><font color='green'><b>${data.actName}</b></font>&nbsp;&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+   							</c:otherwise>  
+						</c:choose>
 					</c:forEach>  		
-					<c:if test="${fn:length(runningAct) == 0 }">
-					  	 	<td>结束</td>
+					<c:if test="${historyFlag == 1 }">
+					  	 	<td><b>结束</b></td>
 					</c:if>		 				
 	  			</tr>
 	  		</table>

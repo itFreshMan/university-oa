@@ -269,4 +269,36 @@ public class ProcessService {
 		return pagination;
 	}
 	
+	
+	public Pagination<Map<String, Object>> getInvolvedProcess(Integer start,
+			Integer limit, String processKey) {
+		User user = SecurityContextUtil.getCurrentUser();
+		Pagination<Map<String, Object>> pagination = processApiDao.getInvolvedProcess(start, limit, processKey,user.getUserCode());
+		for(Map<String, Object> mapResult :pagination.getResult() ){
+			String processInstanceId = mapResult.get("processInstanceId").toString();
+			String processDefinitionId = mapResult.get("processDefinitionId").toString();
+			ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+			if(processInstance == null) {
+				mapResult.put("processFlag", "1");//流程已结束
+				mapResult.put("activityName", "- - -");//当前环节
+			}else {
+				mapResult.put("processFlag", "0");//流程运行中
+				String activityId = processInstance.getActivityId();
+				mapResult.put("activityId", activityId);//当前环节
+				try{
+					ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
+				    for (ActivityImpl activityImpl : ((ProcessDefinitionEntity) processDefinition).getActivities()) {
+				    	if(activityId.equals(activityImpl.getId())) {
+				    		mapResult.put("activityName", activityImpl.getProperty("name"));
+					    	break;
+				    	}
+				    }						
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return pagination;
+	}
 }

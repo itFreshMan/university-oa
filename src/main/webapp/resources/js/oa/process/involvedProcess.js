@@ -13,7 +13,7 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
             reader: new Ext.data.JsonReader({totalProperty: 'total', root:'rows'},[
             		{name:'processDefinitionId'},{name:'processInstanceId'},{name:'businessKey'},{name:'activityId'},
             		{name:'activityName'},{name:'processFlag'},{name:'startTime'},{name:'endTime'},{name:'activityName'},
-            		{name:'taskId'},{name:'title'},{name:'remark'},{name:'processKey'},{name:'status'}
+            		{name:'taskId'},{name:'title'},{name:'remark'},{name:'processKey'},{name:'status'},{name:'startUserName'}
             ])
         });
     	var processKey = new Ext.form.ComboBox({
@@ -63,18 +63,8 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
                 {header:'业务主键',dataIndex:'businessKey',width:100,sortable: true, hidden:true},   
                 {header:'流程类型',dataIndex:'processKey',width:100,sortable: true,
 	          		renderer:function(value, cellmeta, record){
-	          			if(value == 'dispatchProcess') {
-	          				return "<span style='color:#DB9370;font-weight:bold;'>出差派遣</span>";
-	          			}else if(value == 'leaveProcess') {
-	          				return "<span style='color:green;font-weight:bold;'>请假</span>";
-	          			}else if(value == 'overTimeProcess') {
-	          				return "<span style='color:red;font-weight:bold;'>加班</span>";
-	          			}else if(value == 'paymentProcess') {
-	          				return "<span style='color:blue;font-weight:bold;'>费用报销</span>";
-	          			}else if(value == 'dispatchReturnProcess') {
-	          				return "<span style='color:#800080;font-weight:bold;'>派遣返回流程</span>";
-	          			}else if(value == 'borrowMoneyProcess') {
-	          				return "<span style='color:#8A2BE2;font-weight:bold;'>出差借款流程</span>";
+	          			if(value == 'leaveBill') {
+	          				return "<span style='color:#DB9370;font-weight:bold;'>请假流程</span>";
 	          			}else {
 	          				return value;
 	          			}
@@ -96,7 +86,8 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
 	          				return value;
 	          			}
 	          		}
-                },               
+                },    
+                {header:'申请人',dataIndex:'startUserName',width:90,sortable: true},  
                 {header:'查看详情',dataIndex:'key',width:100,sortable: true,
                 	renderer:function(value,metadata){
                 		return '<a class="zlink" href="javascript:void(0)" onclick="involvedProcessGrid.viewProcessDetails();">查看详情</a>';
@@ -138,12 +129,12 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
     lookGraphTrace : function() {//查看流程图
     	var record = this.selectedRecord();
     	var processInstanceId = record.data.processInstanceId;
-    	window.open("/oa/process/showProcessTrack?hisFlag=0&processInstanceId=" + processInstanceId);    	
+    	window.open("/oa/process/showProcessTrack?historyFlag=0&processInstanceId=" + processInstanceId);    	
     },
     lookHisGraphTrace : function() {//查看历史流程图
     	var record = this.selectedRecord();
     	var processInstanceId = record.data.processInstanceId;
-    	window.open("/oa/process/showProcessTrack?hisFlag=1&processInstanceId=" + processInstanceId);    	    	
+    	window.open("/oa/process/showProcessTrack?historyFlag=1&processInstanceId=" + processInstanceId);    	    	
     },
     lookApproveTrace: function() {//查看申请信息及审批意见
     	var record = this.selectedRecord();
@@ -171,46 +162,11 @@ InvolvedProcessGrid = Ext.extend(UxGrid, {
     	var vrecord = records[0];
     	var key = vrecord.get("processKey");
     	var businessKey = vrecord.get("businessKey");
-		if(key == 'dispatchProcess') {
-			var url = "/oa/dispatch/showDispatchProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'leaveProcess') {
-			var url = "/oa/holiday/holidayView?businessKey="+businessKey;
+    	if(key == 'leaveBill') {
+			var url = "/oa/leave/showLeaveBillProcessOption?businessKey="+businessKey;
 			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
 			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
 			DETAILS_VIEW_WINDOW.setTitle("请假流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'overTimeProcess') {
-			var url = "/oa/overtime/showOvertimeProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("加班流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'dispatchReturnProcess') {
-			var url = "/oa/dispatch/showReturnProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差返回流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'paymentProcess'){
-			var url = "/oa/costBaoXiao/showPaymentProcessOption?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("费用报销流程"+businessKey+"---详情 ");
-			DETAILS_VIEW_WINDOW.html = html;
-			DETAILS_VIEW_WINDOW.show();
-		}else if(key == 'borrowMoneyProcess'){
-			var url = "/oa/borrow/borrowView?businessKey="+businessKey;
-			var html = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';    		
-			DETAILS_VIEW_WINDOW = new ProcessDetailsViewWindow();
-			DETAILS_VIEW_WINDOW.setTitle("出差借款流程"+businessKey+"---详情 ");
 			DETAILS_VIEW_WINDOW.html = html;
 			DETAILS_VIEW_WINDOW.show();
 		}

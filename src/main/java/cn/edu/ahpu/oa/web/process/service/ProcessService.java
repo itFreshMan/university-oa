@@ -329,4 +329,10 @@ public class ProcessService {
 		return pagination;
 	}
 
+	public Pagination<Map<String, Object>> getHistoryProcessList(Integer start,
+			Integer limit, String processKey) {
+		Pagination<Map<String, Object>> pagination = processApiDao.getHistoryProcess(start, limit, processKey);
+		return pagination;
+	}
+
 }

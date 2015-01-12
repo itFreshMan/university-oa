@@ -78,15 +78,15 @@ public class ProcessController extends BaseController {
 		return "/oa/process/runningProcess";
 	}
 
-//	/**
-//	 * 打开历史流程页面
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/openHistoryProcessPage")
-//	public String openHistoryProcessPage() {
-//		return "/oa/process/historyProcess";
-//	}
-//	
+	/**
+	 * 打开历史流程页面
+	 * @return
+	 */
+	@RequestMapping(value = "/openHistoryProcessPage")
+	public String openHistoryProcessPage() {
+		return "/oa/process/historyProcess";
+	}
+
 	/**
 	 * 打开当前用户参与的任务页面(已办任务)
 	 * @return
@@ -327,6 +327,16 @@ public class ProcessController extends BaseController {
 		@ResponseBody
 		public Pagination<Map<String, Object>> getRunningProcessList(Integer start, Integer limit,String processKey) {
 			return processService.getRunningProcessList(start, limit,processKey);
+		}
+		
+
+		/**
+		 * 取得运行中流程列表
+		 */
+		@RequestMapping(value = "/historyProcess/list", method = RequestMethod.POST)
+		@ResponseBody
+		public Pagination<Map<String, Object>> getHistoryProcessList(Integer start, Integer limit,String processKey) {
+			return processService.getHistoryProcessList(start, limit,processKey);
 		}
 		
 }

@@ -12,6 +12,7 @@ import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.activiti.bpmn.constants.BpmnXMLConstants;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
@@ -236,7 +237,8 @@ public class ProcessController extends BaseController {
 	                .processInstanceId(processInstanceId).orderByHistoricActivityInstanceId().asc().list();
 	        for (HistoricActivityInstance historicActivityInstance : activityInstances) {
 //	        	if(historicActivityInstance.getActivityType().equals("userTask") || historicActivityInstance.getActivityType().equals("serviceTask")){
-	        	if(historicActivityInstance.getActivityType().equals("userTask")){
+//	        	if(historicActivityInstance.getActivityType().equals("userTask")){
+	        	if(historicActivityInstance.getActivityType().equals(BpmnXMLConstants.ELEMENT_TASK_USER)){
 	        		Map<String, Object> tempMap = new HashMap<String, Object>();
                 	tempMap.put("actName", historicActivityInstance.getActivityName());
                 	if (historicActivityInstance.getEndTime() == null) {// 节点正在运行中

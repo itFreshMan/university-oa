@@ -80,6 +80,8 @@ public class ProcessDiagramGeneratorExtend {
 
         subProcessType.add(BpmnXMLConstants.ELEMENT_SUBPROCESS);
         subProcessType.add(BpmnXMLConstants.ELEMENT_CALL_ACTIVITY);
+        
+        
     }
 
     private static Color RUNNING_COLOR = Color.RED;

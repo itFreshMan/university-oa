@@ -78,9 +78,23 @@ CheckOrderInfoForm = Ext.extend(Ext.ux.Form, {
 			labelStyle:'background-color: #d4e1f2;',
 			cls:'override_label'
 		});
+		
+		this.checkTime = new Ext.form.DisplayField({
+			fieldLabel:'检查时间',
+			value:checkTime,
+			labelStyle:'background-color: #d4e1f2;',
+			cls:'override_label'
+		});
+		
+		this.checkUser = new Ext.form.DisplayField({
+			fieldLabel:'检查人',
+			value:checkUser,
+			labelStyle:'background-color: #d4e1f2;',
+			cls:'override_label'
+		});
 		CheckOrderInfoForm.superclass.constructor.call(this, {
 			anchor : '100%',
-			 height:140,
+			 height:166,
 			region:"north",
 			labelWidth : 100,
 			labelAlign : 'right',
@@ -104,7 +118,12 @@ CheckOrderInfoForm = Ext.extend(Ext.ux.Form, {
 			 			{
 			 				layout:'column',
 			 				bodyStyle:"border:none;",
-			 				items:[{layout:'form',columnWidth: .3,items:this.createTime},{layout:'form',columnWidth: .4,items:this.createUser}]
+			 				items:[{layout:'form',columnWidth: .3,items:this.createTime},{layout:'form',columnWidth: .5,items:this.createUser}]
+			 			},
+			 			{
+			 				layout:'column',
+			 				bodyStyle:"border:none;",
+			 				items:[{layout:'form',columnWidth: .3,items:this.checkTime},{layout:'form',columnWidth: .5,items:this.checkUser}]
 			 			}
 			]
 		});

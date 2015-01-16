@@ -48,14 +48,17 @@ extends HibernateBaseDaoImpl<StoCheckorderInfo, Long>
 				"   t1.POSTCODE  as \"postcode\", "+
 				"   t1.QUICK_MSG as \"quickMsg\", "+
 				"   t1.CREATE_TIME as \"createTime\", "+
-				"   t1.CREATE_USER as \"createUser\", "+
+//				"   t1.CREATE_USER as \"createUser\", "+
+				"   t3.user_name as \"createUser\", "+
 				"   t1.CHECK_TIME as \"checkTime\", "+
-				"   t1.CHECK_USER as \"checkUser\", "+
+//				"   t1.CHECK_USER as \"checkUser\", "+
+				"   t4.user_name as \"checkUser\", "+
 				"   t1.STATUS as \"status\", "+
 				"   t1.DEL_FLAG as \"delFlag\", "+
 				"   t2.TITLE_CONTENT  as \"titleContent\" ,"+
 				"   t2.EXPIRATION_DAYS  as \"expirationDays\" "+
-				" FROM sto_checkorder_info t1,sto_checkorder_title t2 "+
+				" FROM sto_checkorder_info t1 left join tpc_user t3 on t1.CREATE_USER = t3.user_code" +
+				" left join tpc_user t4 on t1.CHECK_USER = t4.user_code,sto_checkorder_title t2 "+
 				" WHERE t1.TITLE = t2.TITLE_CODE "+
 				" AND t1.DEL_FLAG = 0 "+
 				" AND t2.DEL_FLAG = 0 ";
@@ -102,7 +105,7 @@ extends HibernateBaseDaoImpl<StoCheckorderInfo, Long>
 				paramMap.put("endDate", dateFormatMax.format(endDate));
 			}
 			
-			sql += " order by t1.create_time";
+			sql += " order by t1.status,t1.create_time ,t2.EXPIRATION_DAYS";
 			return jdbcPager.queryPage(sql, start, limit,paramMap);
 	}
 	
@@ -124,14 +127,18 @@ extends HibernateBaseDaoImpl<StoCheckorderInfo, Long>
 				"   t1.POSTCODE  as \"postcode\", "+
 				"   t1.QUICK_MSG as \"quickMsg\", "+
 				"   t1.CREATE_TIME as \"createTime\", "+
-				"   t1.CREATE_USER as \"createUser\", "+
+//				"   t1.CREATE_USER as \"createUser\", "+
+				"   t3.user_name as \"createUser\", "+
 				"   t1.CHECK_TIME as \"checkTime\", "+
-				"   t1.CHECK_USER as \"checkUser\", "+
+//				"   t1.CHECK_USER as \"checkUser\", "+
+				"   t4.user_name as \"checkUser\", "+
+
 				"   t1.STATUS as \"status\", "+
 				"   t1.DEL_FLAG as \"delFlag\", "+
 				"   t2.TITLE_CONTENT  as \"titleContent\" "+
-				" FROM sto_checkorder_info t1,sto_checkorder_title t2 "+
-				" WHERE t1.TITLE = t2.TITLE_CODE "+
+				" FROM sto_checkorder_info t1 left join tpc_user t3 on t1.CREATE_USER = t3.user_code" +
+				" left join tpc_user t4 on t1.CHECK_USER = t4.user_code,sto_checkorder_title t2 "+
+				" WHERE t1.TITLE = t2.TITLE_CODE " +
 				" AND t1.DEL_FLAG = 0 "+
 				" AND t2.DEL_FLAG = 0 " +
 				" and t1.busi_id = ?";

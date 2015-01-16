@@ -25,6 +25,10 @@ public class StoCheckorderDetailsService {
 	public List<StoCheckorderDetails> listAllDetails(Long checkorderId) {
 		return dao.listAllDetails(checkorderId);
 	}
+	
+	public List<Map<String,Object>> listAllMapDetails(Long checkorderId) {
+		return dao.listAllMapDetails(checkorderId);
+	}
 }
       
    

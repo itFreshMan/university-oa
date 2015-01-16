@@ -96,12 +96,13 @@ public class StoCheckorderInfoController extends BaseController {
 				"/oa/sto/viewCheckorderInfoDetails");
 		Map<String, Object> map = service.getEntityBusiInfo(busiId);
 		modelAndView.addObject("busiMap", map);
-		List<StoCheckorderDetails> listAllDetails = detailsService
-				.listAllDetails(busiId);
+	/*	List<StoCheckorderDetails> listAllDetails = detailsService
+				.listAllDetails(busiId);*/
+		 List<Map<String,Object>> listAllMapDetails= detailsService.listAllMapDetails(busiId);
 		String json = null;
 		try {
 			mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-			json = mapper.writeValueAsString(listAllDetails);
+			json = mapper.writeValueAsString(listAllMapDetails);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

@@ -67,7 +67,7 @@ StoCheckorderInfo = Ext.extend(Ext.ux.Form,{
 		
 		this.content = this.createTextArea('内容', 'content',60, '95%');
 		this.receiverName = this.createTextField('<font color="red">*</font>收货人','receiverName','95%','',null,255,'长度超过不能255');
-		this.telNo = this.createTextField('<font color="red">*</font>联系电话','telNo','95%','',null,16,'长度超过不能16');
+		this.telNo = this.createTextField('<font color="red">*</font>联系电话','telNo','93%','',null,16,'长度超过不能16');
 		this.orderNum = this.createTextField('<font color="red">*</font>订单号','orderNum','95%','',null,16,'长度超过不能16');
 		this.address =this.createTextArea('地址', 'address',45, '95%');
 		this.postcode = this.createTextField('邮政编码','postcode','95%','',null,6,'长度超过不能6');
@@ -87,7 +87,8 @@ StoCheckorderInfo = Ext.extend(Ext.ux.Form,{
 							                		return ;
 							                	}
 //							                	thizOrderNum = '968646983513';
-							                	window.open(stoSearchRootUrl+thizOrderNum);
+							                	var url = "/sto/StoCheckorderInfo/captureStoOrderDetails?orderNum="+thizOrderNum;
+							                	parent.Home.AddTab("CAPTURE_STO_orderNum_"+thizOrderNum, "订单("+thizOrderNum+")---", url);
 							                }
 						                });
         StoCheckorderInfo.superclass.constructor.call(this, {

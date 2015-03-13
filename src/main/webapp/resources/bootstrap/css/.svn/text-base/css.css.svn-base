@@ -1,0 +1,44 @@
+@charset "utf-8";
+div.sdmenu {
+	width: 180px; font-size:16px; font-weight:bold;
+}
+div.sdmenu div {
+	background-color:#4db9eb;
+	overflow: hidden;
+}
+/* www.codefans.net */
+* html div.sdmenu div{
+    float:left
+}
+div.sdmenu div.collapsed {
+	height: 32px;
+	border-bottom: 1px solid #FFFFFF;
+}
+div.sdmenu div span {
+	display: block;line-height:32px;width:140px;font-weight: bold;color: white;cursor: pointer; margin-left:10px;
+	 
+}
+div.sdmenu div span a{
+    padding:0; background:none; border:0; font-size:14px;line-height:32px;display:block
+}
+div.sdmenu div.collapsed {
+	 width:180px;
+}
+div.sdmenu div.collapsed span{
+   line-height:32px
+   border-bottom: 1px solid #FFFFFF;
+}
+div.sdmenu div a {
+	padding-left:47px;display: block;border-bottom: 1px solid #fff;color: #000;font-size:13px; line-height:28px;
+	background-color:#9ad5f1;
+}
+div.sdmenu div span a.current {
+	background :none; color:#fff
+}
+div.sdmenu div a:hover {
+	text-decoration: none;
+}
+div.sdmenu div span a:hover {
+	background:none;
+
+}

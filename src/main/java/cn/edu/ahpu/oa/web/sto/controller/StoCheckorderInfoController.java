@@ -5,12 +5,21 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.ezmorph.object.DateMorpher;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.util.JSONUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,8 +31,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import cn.edu.ahpu.common.dao.support.Pagination;
+import cn.edu.ahpu.oa.utils.capture.CaptureUtils;
 import cn.edu.ahpu.oa.web.model.StoCheckorderDetails;
 import cn.edu.ahpu.oa.web.model.StoCheckorderInfo;
+import cn.edu.ahpu.oa.web.sto.dto.StoResponseMessage;
+import cn.edu.ahpu.oa.web.sto.dto.StoResponseMessageData;
 import cn.edu.ahpu.oa.web.sto.service.StoCheckorderDetailsService;
 import cn.edu.ahpu.oa.web.sto.service.StoCheckorderInfoService;
 import cn.edu.ahpu.tpc.framework.core.spring.JXLSExcelView;
@@ -180,5 +192,69 @@ public class StoCheckorderInfoController extends BaseController {
          modelMap.put("ExcelTemplateFileName", "查单信息明细.xls");   
          modelMap.put("fileName", fileName);   
 		 return new ModelAndView(new JXLSExcelView(),modelMap);
+	}
+	
+	
+	
+	@Value("${kuaidi100.sto.capture.url}")
+	private String kuaidi100StoCaptureUrl ;
+	
+	/**
+	 * 抓取申通快递 数据;
+	 */
+	@RequestMapping(value = "/captureStoOrderDetails")
+	public ModelAndView captureStoOrderDetails(String orderNum){
+		ModelAndView mav = new ModelAndView("/oa/sto/captureStoOrderDetails");
+		Map<String, String> params = new HashMap<String, String>();  
+//		params.put("type","shentong");
+		params.put("postid",orderNum);
+		
+		Map<String, Class> classMap = new HashMap<String, Class>();  
+		classMap.put("data", StoResponseMessageData.class);
+		String infos =  CaptureUtils.ajaxCrossDomain(kuaidi100StoCaptureUrl,params);
+		
+		JsonConfig config = new JsonConfig();
+		JSONUtils. getMorpherRegistry().registerMorpher( new DateMorpher( new String[] {"yyyy-MM-dd HH:mm:ss" }) );//存在Date类型
+		StoResponseMessage entity = (StoResponseMessage) JSONObject.toBean(JSONObject.fromObject(infos,config), StoResponseMessage.class, classMap);
+		mav.addObject("busiInfo",entity);
+		mav.addObject("orderNum",orderNum);
+		mav.addObject("successFlag",entity.getMessage().toLowerCase().equals("ok") && entity.getStatus().equals("200"));
+		
+		if(entity != null && entity.getData() != null && entity.getData().size() > 0){
+			List<StoResponseMessageData> dataList = entity.getData();
+			mav.addObject("dealRecordSize",dataList.size());//处理记录条数
+			
+			Date dStart = dataList.get(0).getTime();
+			Date dEnd =  dataList.get(dataList.size() - 1).getTime();
+			long interval  = 0l;
+			if(dStart.after(dEnd)){
+				interval  = dStart.getTime() - dEnd.getTime();
+			}else{
+				interval  = dEnd.getTime() - dStart.getTime();
+			}
+			interval  = interval / (1000 * 60) ;//转换为分钟
+			long days = interval / (24 * 60);
+			interval = interval % (24 * 60);
+			long hours = interval / 60;
+			mav.addObject("usedTimeStr",days+"天"+hours+"小时");
+			
+			//对指定列表按升序进行排序。
+			Collections.sort(dataList, new Comparator<StoResponseMessageData>() {
+				@Override
+				public int compare(StoResponseMessageData o1,
+						StoResponseMessageData o2) {
+					int result = 0;
+					if(o1 !=null && o2 != null && o1.getTime() != null && o2.getTime() != null){
+						if(o1.getTime().after(o2.getTime())){
+							result = 1;
+						}
+					}
+					return result;
+				}
+			});
+			entity.setData(dataList);
+		}
+		return mav;
+		
 	}
 }

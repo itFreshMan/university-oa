@@ -1,0 +1,46 @@
+@charset "utf-8";
+body{background:#EAEEF5;}  
+#box {
+	width: 1024px;
+}
+.div1{ width:i024px; background-image:url(../img/bj1.jpg); height:119px;}
+.logo1{float:left; background-image:url(../img/logo1.jpg); 
+       width:88px; height:67px;}
+.logo2{float:left; background-image:url(../img/logo2.jpg); 
+       width:113px; height:67px;}
+.logo3{float:left; background-image:url(../img/logo3.jpg); 
+       width:105px; height:67px;}
+.logo4{float:left; background-image:url(../img/logo4.jpg); 
+       width:145px; height:67px;}
+.logo5{float:left; background-image:url(../img/logo5.jpg); 
+	   width:217px; height:67px;}
+.div2{background-image: url(../img/bj3_02.jpg); width:1024px; height:341px;}
+#box #block-group {
+	background-color: #52CFE1;
+	padding: 20px;
+}
+#box #block-group .block {
+	background-image:url(../img/bg_051.jpg);
+	background-repeat:no-repeat;
+	width: 220px;
+	 background-color:#AAE0F8;
+}
+#box #block-group .btn-group {
+	padding: 14px 20px;
+}
+#box #block-group .btn-group .btn{
+	 margin:3px 0px;
+	 }
+.block .title{ 
+     margin:16px 0px 0px 35px; 
+	 font-size:20px;
+	 font-weight:bold;
+	 }
+.logo6{color: #FFFFFF;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    height: 50px;
+    margin-top: 49px;
+    width: 110px;
+	}

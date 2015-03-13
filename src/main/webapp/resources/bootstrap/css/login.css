@@ -1,0 +1,168 @@
+/*!
+ * MES ADMIN
+ *
+ * Afriq Yasin Ramadhan
+ */
+
+
+/* LOGIN */
+body {
+     padding-top: 60px;
+    overflow: -moz-scrollbars-vertical;
+    overflow: scroll;
+    overflow: -webkit-scrollbars-vertical;
+    overflow: -o-scrollbars-vertical;
+}
+
+a.return-site {
+  padding: 25px 0;
+}
+
+.navbar-height{
+    height:55px !important;   
+}
+
+.navbar .brand {
+  padding: 10px 20px 12px;
+  margin-top:10px;
+  margin-left: -20px;
+  font-size: 13px !important;
+  font-weight: 100 !important;
+  line-height: 1;
+  color: #fff;
+  background: #3F4551;
+  border-radius: 3px;
+}
+
+a:hover.brand{
+    background: #5d6677;
+    color:#ddd;
+}
+
+.header-top{
+    background:#fdfdfd;
+    height:80px;
+    width:auto;
+    margin-top: -5px;
+    border-bottom:1px solid #eee;
+}
+
+.logo-login{
+    margin: 15px 0 0;
+    background: url(../img/logo-login.png) no-repeat;
+    background-size: 50px 50px;
+    height:50px;
+    float:left;
+}
+
+.logo-login h1{
+    font-size:20px;
+    margin-left: 55px;
+    margin-top: 0 !important;
+    letter-spacing: -1px;
+}
+
+.logo-login h5{
+    margin-left: 55px;
+    font-size:9px;
+    margin-top : -10px;
+    font-weight:normal;
+}
+
+.logo-signup{
+    margin: 15px 0 0;
+    background: url(../img/signup.png) no-repeat;
+    background-size: 50px 50px;
+    height:50px;
+    float:left;
+}
+
+.logo-signup h1{
+    font-size:20px;
+    margin-left: 55px;
+    margin-top: 0 !important;
+    letter-spacing: -1px;
+}
+
+.logo-signup h5{
+    margin-left: 55px;
+    font-size:9px;
+    margin-top : -10px;
+    font-weight:normal;
+}
+
+.company-logo{
+    margin: 15px 0 0;
+    background: url(../img/company-logo.png) no-repeat;
+    background-size: 50px 50px;
+    height:50px;
+    float:right;
+}
+
+.company-logo h1{
+    font-size:20px;
+    margin-left: 55px;
+    margin-top: 0 !important;
+    letter-spacing: -1px;
+}
+
+.company-logo h5{
+    margin-left: 55px;
+    font-size:11px;
+    margin-top : -10px;
+    font-weight:normal;
+}
+
+.form-login{
+    background:#F5FFF4;
+    min-height:200px;
+}
+
+.login-form{
+    width:400px;
+    height:300px;
+    margin: 50px auto;
+}
+
+.in-width{
+    width:330px;
+}
+
+.f-login{
+    border: 1px solid #ddd;
+    padding: 20px 30px;
+}
+
+.h-large {
+    height: 32px !important;
+}
+
+.b-grey{
+    background:#fefefe !important;
+}
+
+.b-grey:focus{
+    background:#fff !important;
+}
+
+.lb-name{
+    font-size:15px;
+}
+
+.btn-login{
+    border-radius:2px !important;
+    padding:10px 20px;
+    font-size:18px;
+}
+
+.footer-bottom{
+    background:#fdfdfd;
+    min-height:100px;
+    width:auto;
+    border-top:1px solid #eee;
+    padding-top: 20px;
+}
+
+.footer-bottom p{
+    text-align:center;
+}

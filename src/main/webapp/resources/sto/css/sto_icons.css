@@ -1,0 +1,21 @@
+.a-wb { background: url("/resources/sto/images/icons/ico_index.png") -10px -161px no-repeat; }
+.a-wx { background: url("/resources/sto/images/icons/ico_index.png") -8px -210px no-repeat; }
+.a-app { background: url("/resources/sto/images/icons/ico_index.png") -10px -260px no-repeat; }
+.a-rss { background: url("/resources/sto/images/icons/ico_index.png") -15px -303px no-repeat; }
+.a-share { background: url("/resources/sto/images/icons/ico_index.png") -12px -353px no-repeat; }
+.ico-tel { background: url("/resources/sto/images/icons/ico_index.png") -10px -413px no-repeat; }
+.ico-clock { background: url("/resources/sto/images/icons/ico_index.png") -10px -463px no-repeat; }
+.ico-date { background: url("/resources/sto/images/icons/ico_index.png") -10px -513px no-repeat; }
+
+
+span { margin-right: 10px; padding: 2px 0px 2px 24px; }
+
+.result-info2 { width: 610px; border-top: 1px solid #ddd; }
+
+.status {width: 30px;background: url("/resources/sto/images/icons/ico_status.gif") -50px center no-repeat #fbfbfb;}
+.status-first {background: url("/resources/sto/images/icons/ico_status.gif") 0px center no-repeat #fbfbfb;}
+.status-check {background: url("/resources/sto/images/icons/ico_status.gif") -150px center no-repeat #fbfbfb;}
+
+
+
+

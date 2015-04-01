@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	
+	<!-- #######################方式1 begin ####################### -->
+	<!-- 要调用的工作类 -->
+	<bean id="printInfoJob" class="cn.edu.ahpu.oa.web.quartz.job.PrintInfoJob" />
+	
+	<!-- 定义调用对象和调用对象的方法 -->
+	<bean id="printInfoJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject">
+			<ref bean="printInfoJob" />
+		</property>
+		  <!-- 调用类中的方法 -->
+		<property name="targetMethod">
+			<value>print</value>
+		</property>
+	</bean>
+	
+	 <!-- 定义触发时间 -->
+	<bean id="printInfoJobTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="printInfoJobTask" />
+		</property>
+		<!-- 启动10s秒后执行 -->
+		<property name="startDelay">
+            <value>10000</value>
+        </property>
+        <!-- 每隔6s调用一次 -->
+        <property name="repeatInterval">
+            <value>6000</value>
+        </property>
+        <!-- 执行10次 -->
+        <property name="repeatCount">
+            <value>10</value>
+        </property>
+	</bean>
+	<!-- #######################方式1 end ####################### -->
+	
+	
+	<!-- #######################方式2 begin ####################### -->
+	<!-- 定义调度工作任务 -->
+    <bean id="sendEmailJobTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <!-- 实现了org.springframework.scheduling.quartz.QuartzJobBean的JobBean -->
+            <value>cn.edu.ahpu.oa.web.quartz.job.SendEmailJob</value>
+        </property>
+        <!-- 调用业务逻辑 -->
+        <!--  
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="biz">
+                    <ref bean="users"/>
+                </entry>
+            </map>
+        </property>
+        -->
+    </bean>
+    
+      <!-- 触发任务条件 -->
+    <bean id="sendEmailJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="sendEmailJobTask"></property>
+      	<property name="cronExpression">
+			<value>0/15 * * * * ?</value>
+		</property>
+        
+    </bean>
+	<!-- #######################方式2 end ####################### -->
+	
+	
+	
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
+	<bean id="quartzScheduler" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="printInfoJobTrigger" />
+				<ref bean="sendEmailJobTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>
+

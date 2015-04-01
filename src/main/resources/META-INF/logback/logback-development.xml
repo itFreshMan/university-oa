@@ -9,9 +9,11 @@
     </appender>
     
     <root>
-        <level value="INFO" />
+        <level value="ERROR" />
         <appender-ref ref="CONSOLE" />
     </root>
 
 	<logger name="org.springframework.aop.framework.Cglib2AopProxy" level="ERROR" />
+	
+	<logger name="cn.edu.ahpu" level="INFO" />
 </included>

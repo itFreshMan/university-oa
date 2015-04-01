@@ -33,4 +33,5 @@
 		<value>cn.edu.ahpu.tpc.framework.web.model</value>
 		<value>cn.edu.ahpu.oa.web.model</value>
 	</util:list>
+	
 </beans>

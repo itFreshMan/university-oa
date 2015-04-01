@@ -112,7 +112,7 @@ public class BusinessDao extends HibernateBaseDaoImpl<OaProcessOption, Long>{
 		}
 		
 		String hql = "";
-		if(processKey.equals(OaConstants.LEAVE_BILL_PROCESS_KEY)) {		//出差派遣流程
+		if(processKey.equals(OaConstants.LEAVE_BILL_PROCESS_KEY)) {		//请假流程
 			hql = "update OaBusiLeave t set t.status=? where t.busiId = ?";
 		}
 		if(StringUtils.isNotEmpty(hql) && status > 1) {

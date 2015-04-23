@@ -51,7 +51,7 @@
 	<jaxrs:server id="restServiceContainer" address="/rest">
 		<jaxrs:serviceBeans>
 			<bean class="cn.edu.ahpu.oa.webservice.service.impl.IPersonServiceImpl">
-				<property name="userDao" ref="userDao"></property>
+				<!-- <property name="userDao" ref="userDao"></property> -->
 			</bean>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
@@ -61,6 +61,5 @@
 		<jaxrs:languageMappings>
 			<entry key="en" value="en-gb" />
 		</jaxrs:languageMappings>
-
 	</jaxrs:server>
 </beans>

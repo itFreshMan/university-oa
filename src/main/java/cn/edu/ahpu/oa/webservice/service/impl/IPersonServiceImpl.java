@@ -4,22 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import cn.edu.ahpu.oa.webservice.model.Person;
 import cn.edu.ahpu.oa.webservice.service.IPersonService;
 import cn.edu.ahpu.tpc.framework.web.dao.admin.UserDao;
 import cn.edu.ahpu.tpc.framework.web.model.admin.User;
 
 public class IPersonServiceImpl implements IPersonService {
-	private UserDao userDao;
-
-	public UserDao getUserDao() {
-		return userDao;
-	}
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
+	@Autowired
+	private static UserDao userDao ;
 	public List<Person> listPersonInfo() {
 		List<User> users = userDao.loadAll();
 		return convertUsers2Persons(users);

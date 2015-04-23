@@ -1,37 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
-
-<!-- 	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-		<property name="location" value="classpath:META-INF/res/resource-development.properties" />
-	</bean> -->
-	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+	<!-- 
+		<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"> 
+			<property name="location" value="classpath:META-INF/res/resource-development.properties"/> 
+		 </bean>
+	 -->
+	<bean
+		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-		          <value>classpath:META-INF/res/resource-development.properties</value>
-       		 </list>
+				<value>classpath:META-INF/res/resource-development.properties
+				</value>
+			</list>
 		</property>
 	</bean>
-	
-	 <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-    	<constructor-arg index="0" ref="dataSource" />
-    </bean>
-    
+
+	<bean id="namedParameterJdbcTemplate"
+		class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg index="0" ref="dataSource" />
+	</bean>
+
 	<!-- 项目中配置spring 自动扫描类路径，生成spring bean -->
-	<context:component-scan base-package="cn.edu.ahpu.tpc.framework.web"/>
-	<context:component-scan base-package="cn.edu.ahpu.oa.web"/>
-	
+	<context:component-scan base-package="cn.edu.ahpu.tpc.framework.web" />
+	<context:component-scan base-package="cn.edu.ahpu.oa.web" />
+
 	<!-- 项目中配置Hibernate自动扫描entity类路径 -->
-	<util:list id="hibernatePackagesToScan" list-class="java.util.ArrayList" value-type="java.lang.String">
+	<util:list id="hibernatePackagesToScan" list-class="java.util.ArrayList"
+		value-type="java.lang.String">
 		<value>cn.edu.ahpu.tpc.framework.web.model</value>
 		<value>cn.edu.ahpu.oa.web.model</value>
 	</util:list>
+	
+	<!--
+		在web.xml配置了 
+		<servlet-name>CXFService</servlet-name>  
+        <url-pattern>/webservice/*</url-pattern>  
+		web.xml是路径匹配方式：如果一个请求匹配多个“目录匹配”，容器会选择最长的匹配。
+		所以/webservice/* 请求不会被spring的DispatcherServlet不会被拦截
+	 -->
+	<!-- -->
+	<util:list id="filterChain">
+		<sec:filter-chain pattern="/webservice/**" filters="none" />
+	</util:list> 
 	
 </beans>

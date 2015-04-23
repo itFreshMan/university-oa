@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"> 
+	
+	<display-name>resource-web</display-name>
+	
+	<context-param>  
+        <param-name>contextConfigLocation</param-name>  
+        <param-value>classpath*:META-INF/spring/*-context.xml</param-value>  
+    </context-param>  
+	<context-param>
+		<param-name>contextInitializerClasses</param-name>
+		<param-value>cn.edu.ahpu.tpc.framework.core.support.ProfileApplicationContextInitializer</param-value>
+	</context-param>
+	
+	<listener>
+		<listener-class>cn.edu.ahpu.tpc.framework.core.spring.session.EnhancedHttpSessionEventPublisher</listener-class>
+	</listener>
+	<listener>
+		<listener-class>cn.edu.ahpu.tpc.framework.core.spring.session.OnlineUserListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+        <filter-name>lazyLoadingFilter</filter-name>
+        <filter-class>
+            org.springframework.orm.hibernate4.support.OpenSessionInViewFilter
+        </filter-class>
+    </filter>
+    
+    <filter-mapping>
+    	<filter-name>lazyLoadingFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
+	
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+    
+	<servlet>
+		<servlet-name>rest</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextClass</param-name>
+			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+		</init-param>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>org.spring.rest</param-value> <!-- won't find anything -->
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>rest</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
+	<filter>
+    	<filter-name>DruidWebStatFilter</filter-name>
+    	<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+    	<init-param>
+        	<param-name>exclusions</param-name>
+        	<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+    	</init-param>
+  	</filter>
+  	<filter-mapping>
+    	<filter-name>DruidWebStatFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+ 	</filter-mapping>
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+	 	<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+	 	<init-param>
+	        <param-name>resetEnable</param-name>
+	        <param-value>false</param-value>
+	    </init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+	  	<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>  
+ 		<servlet-name>PrintProjectVersionServlet</servlet-name>  
+ 		<servlet-class>cn.edu.ahpu.tpc.framework.core.support.PrintProjectVersionServlet</servlet-class>   
+ 		<load-on-startup>999</load-on-startup>  
+	</servlet>  
+	
+	<!-- 配置cxfservlet -->  
+    <servlet>  
+        <servlet-name>CXFService</servlet-name>  
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>  
+    </servlet>  
+    <servlet-mapping>  
+        <servlet-name>CXFService</servlet-name>  
+        <url-pattern>/webservice/*</url-pattern>  
+    </servlet-mapping>  
+		
+	<session-config>
+       <session-timeout>30</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<error-page> 
+    	<error-code>500</error-code> 
+        <location>/WEB-INF/views/error.jsp</location> 
+    </error-page>
+    
+</web-app>

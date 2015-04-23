@@ -15,12 +15,12 @@
 	<properties>
 		<ahpu.tpc.version>1.0.1.SNAPSHOT</ahpu.tpc.version>
 		<activiti-version>5.14</activiti-version>
-		
+
 		<!--log4j日志文件管理包版本 -->
 		<slf4j.version>1.6.6</slf4j.version>
 		<log4j.version>1.2.16</log4j.version>
-		
-		<cxf.version>2.5.2</cxf.version>
+
+		<cxf.version>2.4.4</cxf.version>
 	</properties>
 
 
@@ -120,19 +120,30 @@
 			<artifactId>quartz</artifactId>
 			<version>1.5.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.3</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+			</exclusions>
+			<version>${cxf.version}</version>
+		</dependency>	
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-databinding-aegis</artifactId>
@@ -148,7 +159,13 @@
 			<artifactId>cxf-rt-transports-http-jetty</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
-				
+
+		<!-- restful webservice -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -36,9 +36,9 @@
 		<property name="startDelay">
             <value>10000</value>
         </property>
-        <!-- 每隔6s调用一次 -->
+        <!-- 每隔600s调用一次 -->
         <property name="repeatInterval">
-            <value>6000</value>
+            <value>600000</value>
         </property>
         <!-- 执行10次 -->
         <property name="repeatCount">

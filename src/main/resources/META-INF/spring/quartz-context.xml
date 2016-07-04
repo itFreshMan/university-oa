@@ -71,7 +71,8 @@
     <bean id="sendEmailJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="sendEmailJobTask"></property>
       	<property name="cronExpression">
-			<value>0/15 * * * * ?</value>
+			<!-- <value>0/15 * * * * ?</value> -->
+			<value>0 0 * * * ?</value>
 		</property>
         
     </bean>
